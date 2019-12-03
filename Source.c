@@ -285,7 +285,7 @@ void Ticket(int id2, int seat, int price, int cd, int cm, int cy, int d, int m, 
 }
 
 //Get route list from file and assign to array
-RouteList()
+void RouteList()
 {
 	//Get route list
 	int i = 0, count = 0;
@@ -369,7 +369,7 @@ void Cusfile(char name[30], int id2, int seat, int price, int currentD, int curr
 	strcat(directory, ".\\Tickets\\");
 	strcat(directory, filename);
 	C = fopen(directory, "w+");
-	sprintf(s, "%s\n%d\n%d/%d/%d\n%d/%d/%d\n%d\n%d\n", name, id2, currentD, currentM, currentY, d, m, y, seat, price);
+	sprintf(s, "%s\n%d\n%d/%d/%d\n%d/%d/%d\n%d\n%d", name, id2, currentD, currentM, currentY, d, m, y, seat, price);
 	fputs(s, C);
 	fclose(C);
 }
