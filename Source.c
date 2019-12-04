@@ -14,7 +14,8 @@ char fRoute[10][30];
 
 struct TicketForm person[300];
 
-int count = 0, id2 = 1000;
+int count = 0;
+//  id2 = 1000;
 
 //Main
 int main()
@@ -45,10 +46,11 @@ int main()
 			_getch();
 			break;
 		case 5:
-			int idc;
+			char idc[30];
 			printf("Enter your ticket ID: ");
-			scanf("%d", &idc);
-			Delfile(idc + 1);
+			scanf("%s", &idc);
+			Delfile(idc);
+			break;
 		case 6:
 			x = 6;
 			printf("Thank you for using our service!");
@@ -58,6 +60,7 @@ int main()
 			printf("Choice not available\n");
 			system("cls");
 		}
+		break;
 	}
 }
 
@@ -236,9 +239,8 @@ void Booking(int *array, int choice, int price)
 		strcpy(person[count].class, "Economy");
 
 	GetSystemDate(&currentD, &currentM, &currentY);
-	Ticket(id2, j, price, currentD, currentM, currentY, d, m, y);
-	id2++;
-	Cusfile(person[count].name, id2, j, price, currentD, currentM, currentY, d, m, y);
+	Ticket(person[count].route, person[count].name, person[count].identity, j, price, currentD, currentM, currentY, d, m, y);
+	Cusfile(person[count].route, person[count].name, person[count].identity, j, price, currentD, currentM, currentY, d, m, y);
 }
 
 //Reserved ticket
@@ -265,21 +267,21 @@ void ReservedTicket(int price)
 }
 
 //Ticket
-void Ticket(int id2, int seat, int price, int cd, int cm, int cy, int d, int m, int y)
+void Ticket(char route[30], char name[30], char identity[30], int seat, int price, int cd, int cm, int cy, int d, int m, int y)
 {
 	system("cls");
 	printf("\t                     Booking ticket successfully!");
 	printf("\n\n");
-	printf("\t        ----------------AIRPLANE BOOKING TICKET---------------\n");
+	printf("\t       ---------------------AIRPLANE TICKET-------------------\n");
 	printf("\t=====================================================================\n");
-	printf("\t Booking ID : %d \t\t\tRoute : %s\n", id2, person[count].route);
+	printf("\t Booking ID : %s\t\t\tRoute : %s\n", person[count].identity, person[count].route);
 	printf("\t Customer  : %s\n", person[count].name);
 	printf("\t\t\t                       Purchase Date    : %d/%d/%d\n", cd, cm, cy);
 	printf("\t\t\t                       Flight Date      : %d/%d/%d\n", d, m, y);
 	printf("\t                                              Time      : 08:00pm\n");
 	printf("\t Seat Class: %-12s                     Seats No. : %d  \n", person[count].class, seat);
 	printf("\t                                              Price     : %d  \n\n", price);
-	person[count].id = id2;
+	// person[count].id = id2;
 	printf("\t=====================================================================\n");
 	return;
 }
@@ -358,28 +360,31 @@ int DateDifference(struct Date dt1, struct Date dt2)
 }
 
 //Print each ticket into a file
-FILE *C;
 
-void Cusfile(char name[30], int id2, int seat, int price, int currentD, int currentM, int currentY, int d, int m, int y)
+int idx = 0;
+
+void Cusfile(char route[30], char name[30], char identity[30], int seat, int price, int currentD, int currentM, int currentY, int d, int m, int y)
 {
-	char filename[11];
+	FILE *C;
+	char filename[20];
 	char directory[300];
 	char s[300];
-	sprintf(filename, "%d.txt", id2 - 1);
+	sprintf(filename, "%s.txt", identity);
 	strcat(directory, ".\\Tickets\\");
 	strcat(directory, filename);
 	C = fopen(directory, "w+");
-	sprintf(s, "%s\n%d\n%d/%d/%d\n%d/%d/%d\n%d\n%d", name, id2, currentD, currentM, currentY, d, m, y, seat, price);
+	// idx = idx + 1;
+	sprintf(s, "%s\n%s\n%s\n%d/%d/%d\n%d/%d/%d\n%d\n%d", route, name, identity, currentD, currentM, currentY, d, m, y, seat, price);
 	fputs(s, C);
 	fclose(C);
 }
 
 //Cancel the ticket
-void Delfile(int id)
+void Delfile(char identity[30])
 {
-	char filename[11];
+	char filename[20];
 	char directory[300];
-	sprintf(filename, "%d.txt", id - 1);
+	sprintf(filename, "%s.txt", identity);
 	strcat(directory, ".\\Tickets\\");
 	strcat(directory, filename);
 	if (remove(directory) == 0)
