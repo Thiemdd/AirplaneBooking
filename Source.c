@@ -38,11 +38,13 @@ int main()
 			break;
 		case 3:
 			ReservedTicket(price);
+			// readCusfile();
 			break;
 		case 4:
 			choice2 = Choice(&price);
 			Booking(seat[choice2 - 1], choice2, price);
 			count++;
+			printf("Success");
 			_getch();
 			break;
 		case 5:
@@ -366,18 +368,24 @@ int idx = 0;
 void Cusfile(char route[30], char name[30], char identity[30], int seat, int price, int currentD, int currentM, int currentY, int d, int m, int y)
 {
 	FILE *C;
+	FILE *D;
 	char filename[20];
 	char directory[300];
 	char s[300];
+	char r[100];
 	sprintf(filename, "%s.txt", identity);
 	strcat(directory, ".\\Tickets\\");
 	strcat(directory, filename);
 	C = fopen(directory, "w+");
-	// idx = idx + 1;
 	sprintf(s, "%s\n%s\n%s\n%d/%d/%d\n%d/%d/%d\n%d\n%d", route, name, identity, currentD, currentM, currentY, d, m, y, seat, price);
 	fputs(s, C);
+	D = fopen("Customer.txt", "a+");
+	strcat(filename, " \n");
+	fputs(filename, D);
 	fclose(C);
+	fclose(D);
 }
+
 
 //Cancel the ticket
 void Delfile(char identity[30])

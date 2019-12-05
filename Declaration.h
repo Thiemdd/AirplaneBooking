@@ -14,5 +14,6 @@ void RouteList();
 void GetSystemDate(int* , int* , int*);
 int Weekday(int, int, int);
 int DateDifference();
+void readCusfile();
 void Cusfile(char[30], char[30], char[30], int, int, int, int, int, int, int, int);
 void Delfile(char[30]);
