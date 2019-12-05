@@ -5,25 +5,44 @@
 #include <string.h>
 #include <Windows.h>
 
-// Read customer list in Customer.txt and get a 2D array
-char **readCusfile(int *count)
+// Read customer list in Customer.txt and get all files into a 2D array
+char **readCusfile()
 {
     FILE *R;
     char line[100];
     char **CustomerList;
     CustomerList = (char **)malloc(sizeof(char *));
-    *count = 0;
+    int count = 0;
     R = fopen("customer.txt", "r");
     while (fgets(line, sizeof(line), R))
     {
-        CustomerList = (char **)realloc(CustomerList, ((*count) + 1) * sizeof(char *));
-        CustomerList[*count] = (char *)malloc(sizeof(line));
-        strcpy(CustomerList[*count], line);
-        CustomerList[*count][strcspn(CustomerList[*count], "\n")] = '\0';
-        (*count)++;
+
+        CustomerList = (char **)realloc(CustomerList, (count + 1) * sizeof(char *));
+        CustomerList[count] = (char *)malloc(sizeof(line));
+        strcpy(CustomerList[count], line);
+        strtok(CustomerList[count], "\n");
+        count++;
+        //CustomerList[count-1][strcspn(CustomerList[count], "\n")] = '\0';
+        // (*count)++;
     }
     fclose(R);
     return CustomerList;
+}
+int countLine(const char *filename)
+{
+    FILE *R;
+    char c;
+    // char line[100];
+    // char **CustomerList;
+    // CustomerList = (char **)malloc(sizeof(char *));
+    int count = 1;
+    R = fopen(filename, "r");
+    for (c = fgetc(R); c != EOF; c = fgetc(R))
+    {
+        if (c == '\n')
+            count++;
+    }
+    return count;
 }
 
 char *getithline(char fileName[200], int targetLine)
@@ -53,25 +72,21 @@ char *getithline(char fileName[200], int targetLine)
     return line;
 }
 
-// int *GetTicName()
+// char *getInfor()
 // {
-//     char **CusList;
-//     int linecount;
-//     CusList = readCusfile(&linecount);
-//     FILE *R1;
-//     for (int i = 0; i < linecount; i++)
-//     {
-//         R1 = fopen(CusList[i], "r");
-//     }
-//     return 0;
+//     char** list = readCusfile()
 // }
+
 int main()
 {
     char **output;
     char *output1;
-    int count;
-    output = readCusfile(&count);
-    output1 = getithline(output[1], 2);
-    printf("%s", output1);
-    return 0;
+    char *output2;
+    output = readCusfile();
+    for (int i = 0; i < countLine("Customer.txt"); i++)
+    {
+        output2 = getithline(output[i], 1);
+        printf("%s", output2);
+    }
+    // printf("%s\n", output[2]);
 }
