@@ -361,7 +361,7 @@ int DateDifference(struct Date dt1, struct Date dt2)
 	return (n2 - n1);
 }
 
-//Print each ticket into a file
+//Print each ticket into a ticket file
 
 int idx = 0;
 
@@ -379,13 +379,13 @@ void Cusfile(char route[30], char name[30], char identity[30], int seat, int pri
 	C = fopen(directory, "w+");
 	sprintf(s, "%s\n%s\n%s\n%d/%d/%d\n%d/%d/%d\n%d\n%d", route, name, identity, currentD, currentM, currentY, d, m, y, seat, price);
 	fputs(s, C);
+	//Print customer list into Customer.txt
 	D = fopen("Customer.txt", "a+");
 	strcat(filename, " \n");
 	fputs(filename, D);
 	fclose(C);
 	fclose(D);
 }
-
 
 //Cancel the ticket
 void Delfile(char identity[30])
