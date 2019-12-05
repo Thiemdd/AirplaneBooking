@@ -26,11 +26,11 @@ char **readCusfile(int *count)
     return CustomerList;
 }
 
-char *getithline(char fileName[100], int targetLine)
+char *getithline(char fileName[200], int targetLine)
 {
     FILE *S;
-    char directory[200];
-    strcmp(directory, ".\\Tickets\\");
+    char directory[200] = "";
+    strcat(directory, ".\\Tickets\\");
     strcat(directory, fileName);
     // Vị trí của dòng hiện tại
     int tmpcount = 1;
@@ -53,25 +53,25 @@ char *getithline(char fileName[100], int targetLine)
     return line;
 }
 
-int *GetTicName()
-{
-    char **CusList;
-    int linecount;
-    CusList = readCusfile(&linecount);
-    FILE *R1;
-    for (int i = 0; i < linecount; i++)
-    {
-        R1 = fopen(CusList[i], "r");
-    }
-    return 0;
-}
+// int *GetTicName()
+// {
+//     char **CusList;
+//     int linecount;
+//     CusList = readCusfile(&linecount);
+//     FILE *R1;
+//     for (int i = 0; i < linecount; i++)
+//     {
+//         R1 = fopen(CusList[i], "r");
+//     }
+//     return 0;
+// }
 int main()
 {
     char **output;
     char *output1;
     int count;
     output = readCusfile(&count);
-    output1 = getithline(output[1], 3);
+    output1 = getithline(output[1], 2);
     printf("%s", output1);
     return 0;
 }
