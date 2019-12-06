@@ -87,7 +87,7 @@ int main()
     char **arrfilenames;
     char *line1;
     char *line5;
-    char *sameflight = "";
+    // char *sameflight = "";
     // Đọc tất cả các dòng trong Customer.txt và lưu vào output
     arrfilenames = readfile("Customer.txt");
     // Vòng lặp đếm tất cả các file trong Customer.txt
@@ -97,17 +97,14 @@ int main()
         line1 = getithline(arrfilenames[i], 1);
         // Lưu dòng thứ 5 của tất cả các file có trong Customer.txt vào line5
         line5 = getithline(arrfilenames[i], 5);
-        for (int j = 0; j < i; j++)
+        for (int j = i + 1; j < countLine("Customer.txt"); j++)
         {
-            for (int k = 0; k < j; k++)
+            if ((strcmp(getithline(arrfilenames[j], 1), line1) == 0) && (strcmp(getithline(arrfilenames[j], 5), line5) == 0))
             {
-                if ((strcmp(getithline(arrfilenames[j], 1), line1) == 0) && (strcmp(getithline(arrfilenames[j], 5), line5) == 0))
-                {
-                    sprintf(sameflight, "%s %s\n", arrfilenames[j], arrfilenames[i]);
-                }
+                printf("%s and %s have identical route and flight date\n", arrfilenames[j], arrfilenames[i]);
             }
         }
-        printf("%s\n", sameflight);
+        // printf("%s\n", sameflight);
         // // Vòng lặp đếm tất cả các dòng của line1
         // for (int j = 0; j < i; j++)
         // {
@@ -125,6 +122,7 @@ int main()
         //     printf_s("%s same as %s\n",arrfilenames[i],arrfilenames[j]);
         //     }
         // }
+        
     }
 }
 // printf("%s\n", output[2]);
