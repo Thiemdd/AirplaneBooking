@@ -14,17 +14,18 @@ char fRoute[10][30];
 
 struct TicketForm person[300];
 
-int count = 0;
+int num = 0;
 //  id2 = 1000;
 
 //Main
-int main()
+int mainn()
 {
 	int choice1, choice2, **seat, i, price = 0;
 	seat = (int **)calloc(49, sizeof(int *));
 	for (i = 0; i < 6; i++)
 		*(seat + i) = (int *)calloc(49, sizeof(int));
 	int x = 0;
+	char idc[30];
 
 	RouteList();
 
@@ -43,12 +44,11 @@ int main()
 		case 4:
 			choice2 = Choice(&price);
 			Booking(seat[choice2 - 1], choice2, price);
-			count++;
+			num++;
 			printf("Success");
-			_getch();
+			system("pause");
 			break;
 		case 5:
-			char idc[30];
 			printf("Enter your ticket ID: ");
 			scanf("%s", &idc);
 			Delfile(idc);
@@ -64,6 +64,7 @@ int main()
 		}
 		break;
 	}
+	free(seat);
 }
 
 //Print choices
@@ -166,7 +167,7 @@ int Choice(int *price)
 		printf("\nChoice is invalid, please choice another option: ");
 		scanf("%d", &choice);
 	}
-	strcpy(person[count].route, fRoute[choice - 1]);
+	strcpy(person[num].route, fRoute[choice - 1]);
 
 	//Get price of the route
 	f = fopen("FlightSchedule.txt", "r");
@@ -189,13 +190,13 @@ void Booking(int *array, int choice, int price)
 {
 	int i, j, currentD, currentM, currentY, d, m, y;
 	printf("\nWhat day you want to depart? (DD/MM/YYYY): "); //Se phai viet them code dieu kien
-															 //cho ngay thang nam nhap vao
+															   //cho ngay thang nam nhap vao
 	scanf("%d%*c%d%*c%d", &d, &m, &y);
 	fflush(stdin);
 	printf("\nPlease enter your name: ");
-	scanf(" %19[^\n]%*[^\n]", &person[count].name);
+	scanf(" %19[^\n]%*[^\n]", &person[num].name);
 	printf("Please enter your identity number: ");
-	scanf("%s", &person[count].identity);
+	scanf("%s", &person[num].identity);
 	printf("\n\t\t =========");
 	printf("\n\t\t| COCKPIT |");
 	printf("\n\t\t =========\n\n");
@@ -234,21 +235,23 @@ void Booking(int *array, int choice, int price)
 	}
 	else
 		array[j] = 1;
-	person[count].seat = j;
+	person[num].seat = j;
 	if (j >= 1 && j <= 16)
-		strcpy(person[count].class, "Business");
+		strcpy(person[num].class, "Business");
 	if (j >= 17 && j <= 48)
-		strcpy(person[count].class, "Economy");
+		strcpy(person[num].class, "Economy");
 
 	GetSystemDate(&currentD, &currentM, &currentY);
-	Ticket(person[count].route, person[count].name, person[count].identity, j, price, currentD, currentM, currentY, d, m, y);
-	Cusfile(person[count].route, person[count].name, person[count].identity, j, price, currentD, currentM, currentY, d, m, y);
+	Ticket(person[num].route, person[num].name, person[num].identity, j, price, currentD, currentM, currentY, d, m, y);
+	Cusfile(person[num].route, person[num].name, person[num].identity, j, price, currentD, currentM, currentY, d, m, y);
 }
 
 //Reserved ticket
 void ReservedTicket(int price)
 {
+	int count = 0;
 	int i;
+	char fileName[200];
 	char pass[10], pak[10] = "pass";
 	printf("Enter the password to see details: ");
 	scanf("%s", &pass);
@@ -259,6 +262,11 @@ void ReservedTicket(int price)
 		else
 			for (i = 0; i < count; i++)
 			{
+				FILE *Y;
+				char directory[200] = "";
+				strcat(directory, ".\\Tickets\\");
+				strcat(directory, fileName);
+				Y = fopen(directory, "r");
 				printf("seat no: %d is booked by %s booking id is %d, ticket price: %d\n", person[i].seat, person[i].name, person[i].id, price);
 			}
 	}
@@ -276,14 +284,14 @@ void Ticket(char route[30], char name[30], char identity[30], int seat, int pric
 	printf("\n\n");
 	printf("\t       ---------------------AIRPLANE TICKET-------------------\n");
 	printf("\t=====================================================================\n");
-	printf("\t Booking ID : %s\t\t\tRoute : %s\n", person[count].identity, person[count].route);
-	printf("\t Customer  : %s\n", person[count].name);
+	printf("\t Booking ID : %s\t\t\tRoute : %s\n", person[num].identity, person[num].route);
+	printf("\t Customer  : %s\n", person[num].name);
 	printf("\t\t\t                       Purchase Date    : %d/%d/%d\n", cd, cm, cy);
 	printf("\t\t\t                       Flight Date      : %d/%d/%d\n", d, m, y);
 	printf("\t                                              Time      : 08:00pm\n");
-	printf("\t Seat Class: %-12s                     Seats No. : %d  \n", person[count].class, seat);
+	printf("\t Seat Class: %-12s                     Seats No. : %d  \n", person[num].class, seat);
 	printf("\t                                              Price     : %d  \n\n", price);
-	// person[count].id = id2;
+	// person[num].id = id2;
 	printf("\t=====================================================================\n");
 	return;
 }
