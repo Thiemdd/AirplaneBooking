@@ -87,8 +87,7 @@ int main()
     char **arrfilenames;
     char *line1;
     char *line5;
-    char sameflight[300];
-    // char **sameline;
+    char *sameflight = "";
     // Đọc tất cả các dòng trong Customer.txt và lưu vào output
     arrfilenames = readfile("Customer.txt");
     // Vòng lặp đếm tất cả các file trong Customer.txt
@@ -98,19 +97,34 @@ int main()
         line1 = getithline(arrfilenames[i], 1);
         // Lưu dòng thứ 5 của tất cả các file có trong Customer.txt vào line5
         line5 = getithline(arrfilenames[i], 5);
-        // Vòng lặp đếm tất cả các dòng của line1
         for (int j = 0; j < i; j++)
         {
             for (int k = 0; k < j; k++)
             {
-                // Nếu dòng 1 và dòng 5 của file giống nhau thì cho các file đó vào 1 xâu
-                if ((strcmp(getithline(arrfilenames[k], 1), getithline(arrfilenames[j], 1)) == 0) && (strcmp(getithline(arrfilenames[k], 5), getithline(arrfilenames[j], 5)) == 0))
+                if ((strcmp(getithline(arrfilenames[j], 1), line1) == 0) && (strcmp(getithline(arrfilenames[j], 5), line5) == 0))
                 {
-                    sprintf(sameflight, "%s", arrfilenames[j]);
+                    sprintf(sameflight, "%s %s\n", arrfilenames[j], arrfilenames[i]);
                 }
             }
         }
-        printf("%s", sameflight);
+        printf("%s\n", sameflight);
+        // // Vòng lặp đếm tất cả các dòng của line1
+        // for (int j = 0; j < i; j++)
+        // {
+        //     for (int k = 0; k < j; k++)
+        //     {
+        //         // Nếu dòng 1 và dòng 5 của file giống nhau thì cho các file đó vào 1 xâu
+        //         if ((strcmp(getithline(arrfilenames[k], 1), getithline(arrfilenames[j], 1)) == 0) && (strcmp(getithline(arrfilenames[k], 5), getithline(arrfilenames[j], 5)) == 0))
+        //         {
+        //             sprintf(sameflight, "%s", arrfilenames[k]);
+        //         }
+        //     }
+        // }
+        // for(int j=i+1;j<countLine("Customer.txt");j++){
+        //     if ((strcmp(getithline(arrfilenames[j], 1),line1)==0)&&(strcmp(getithline(arrfilenames[j], 5),line5)==0)){
+        //     printf_s("%s same as %s\n",arrfilenames[i],arrfilenames[j]);
+        //     }
+        // }
     }
 }
 // printf("%s\n", output[2]);
