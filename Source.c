@@ -190,7 +190,7 @@ void Booking(int *array, int choice, int price)
 {
 	int i, j, currentD, currentM, currentY, d, m, y;
 	printf("\nWhat day you want to depart? (DD/MM/YYYY): "); //Se phai viet them code dieu kien
-															   //cho ngay thang nam nhap vao
+															 //cho ngay thang nam nhap vao
 	scanf("%d%*c%d%*c%d", &d, &m, &y);
 	fflush(stdin);
 	printf("\nPlease enter your name: ");
@@ -389,7 +389,7 @@ void Cusfile(char route[30], char name[30], char identity[30], int seat, int pri
 	fputs(s, C);
 	//Print customer list into Customer.txt
 	D = fopen("Customer.txt", "a+");
-	strcat(filename, " \n");
+	strcat(filename, "\n");
 	fputs(filename, D);
 	fclose(C);
 	fclose(D);
