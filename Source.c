@@ -206,7 +206,7 @@ void ChangeTime()
 		printf("Set the new flight time for the route (HH:MM - 12 hour format ): ");
 		fflush(stdin);
 		scanf("%d%*c%d", &hour, &min);
-		while (((hour < 0) || (hour > 12)) || ((min < 0) || (min > 59)))
+		while ((hour < 0) || (hour > 12) || (min < 0) || (min > 59))
 		{
 			printf("\nTime invalid");
 			printf("Set the new flight time for the route (HH:MM - 12 hour format ): ");
