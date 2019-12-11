@@ -24,4 +24,4 @@ int DateDifference(struct Date,  struct Date);
 int ValidateTime(int, int, int);
 int CompareTime(int, int, int, int, int, int);
 int isSameFlight(char *, char *, char *);
-int *getBookedSeat(char[30], char[30]);
+int *getBookedSeat(char[30], char[30], int*);
