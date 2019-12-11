@@ -418,7 +418,7 @@ void Booking(int choice, int oPrice)
 
 	array[j] = 1;
 
-	person[num].seat = j - 1;
+	person[num].seat = j + 1;
 	if (j >= 1 && j <= 16)
 		strcpy(person[num].class, "Business");
 	if (j >= 17 && j <= 48)
