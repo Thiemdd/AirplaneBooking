@@ -7,8 +7,8 @@
 #include "Struct.c"
 
 // To store number of days in all months from January to Dec
-int monthDays[12] = { 31, 28, 31, 30, 31, 30,
-					 31, 31, 30, 31, 30, 31 };
+int monthDays[12] = {31, 28, 31, 30, 31, 30,
+					 31, 31, 30, 31, 30, 31};
 
 char fRoute[10][30];
 
@@ -58,9 +58,9 @@ int main()
 }
 
 // Lấy ra dòng thứ i của 1 file
-char* getithline(char fileName[50], int targetLine)
+char *getithline(char fileName[50], int targetLine)
 {
-	FILE* S;
+	FILE *S;
 	// Lấy ra đường dẫn
 	char directory[200] = "";
 	strcpy(directory, ".\\Tickets\\");
@@ -68,7 +68,7 @@ char* getithline(char fileName[50], int targetLine)
 	// Vị trí của dòng hiện tại
 	int tmpcount = 1;
 	// Dòng lấy ra được lưu vào đây
-	char* line = (char*)malloc(200 * sizeof(char));
+	char *line = (char *)malloc(200 * sizeof(char));
 	// Mở file
 	S = fopen(directory, "r+");
 	// Đọc lần lượt từng dòng cho đến hết
@@ -111,8 +111,8 @@ int Menu()
 void ChangePrice()
 {
 	int set = 0, j = 0;
-	FILE* f;
-	FILE* fTemp;
+	FILE *f;
+	FILE *fTemp;
 	char buffer[100], nPrice[10];
 	char path[] = "FlightSchedule.txt";
 	int line = 0, count = 0;
@@ -173,8 +173,8 @@ void ChangePrice()
 void ChangeTime()
 {
 	int set = 0, i, j = 0, hour, min;
-	FILE* f;
-	FILE* fTemp;
+	FILE *f;
+	FILE *fTemp;
 	char buffer[100], nTime[10], apm[10];
 	char path[] = "FlightSchedule.txt";
 	int line = 0, count = 0;
@@ -255,7 +255,7 @@ void ChangeTime()
 }
 
 //Route choice
-int Choice(int* price)
+int Choice(int *price)
 {
 	int i = 0, count = 0, j = 0, choice = 0;
 	char line[50];
@@ -276,7 +276,7 @@ int Choice(int* price)
 	strcpy(person[num].route, fRoute[choice - 1]);
 
 	//Get price of the route
-	FILE* f;
+	FILE *f;
 	f = fopen("FlightSchedule.txt", "r");
 	if (!f)
 		printf("cannot open file");
@@ -345,7 +345,7 @@ void Booking(int choice, int oPrice)
 	scanf("%s", &person[num].identity);
 	printf("\n\t\t =========");
 	printf("\n\t\t| COCKPIT |");
-	int* bookedSeatNo = getBookedSeat(person[num].route, person[num].flightDate, &seatCardinality);
+	int *bookedSeatNo = getBookedSeat(person[num].route, person[num].flightDate, &seatCardinality);
 	for (i = 0; i < 12; i++)
 	{
 		for (j = 0; j < 4; j++)
@@ -418,7 +418,7 @@ void Booking(int choice, int oPrice)
 
 	array[j] = 1;
 
-	person[num].seat = j-1;
+	person[num].seat = j - 1;
 	if (j >= 1 && j <= 16)
 		strcpy(person[num].class, "Business");
 	if (j >= 17 && j <= 48)
@@ -466,8 +466,8 @@ float TotalPrice(int original, struct Date dt1, struct Date dt2)
 //Cancel the ticket
 void Cancel(char identity[30])
 {
-	FILE* f;
-	FILE* fTemp;
+	FILE *f;
+	FILE *fTemp;
 	char buffer[30];
 	int line = 0, count = 0;
 	char path[] = "Customer.txt";
@@ -512,12 +512,12 @@ void ReservedTicket()
 {
 	char pass[10], pak[] = "pass";
 	char path[] = "Customer.txt";
-	char* line1;
-	char* line2;
-	char* line3;
-	char* line5;
-	char* line6;
-	char** arrfilenames;
+	char *line1;
+	char *line2;
+	char *line3;
+	char *line5;
+	char *line6;
+	char **arrfilenames;
 	printf("Enter the password to see details: ");
 	scanf("%s", &pass);
 	if (strcmp(pass, pak) == 0)
@@ -542,18 +542,18 @@ void ReservedTicket()
 }
 
 // Đọc tất cả các dòng trong Customer.txt và lưu vào 1 mảng
-char** Readfile(const char* filename)
+char **Readfile(const char *filename)
 {
-	FILE* R;
+	FILE *R;
 	char line[100];
-	char** customerList;
-	customerList = (char**)malloc(sizeof(char*));
+	char **customerList;
+	customerList = (char **)malloc(sizeof(char *));
 	int count = 0;
 	R = fopen(filename, "r");
 	while (fgets(line, sizeof(line), R))
 	{
-		customerList = (char**)realloc(customerList, (count + 1) * sizeof(char*));
-		customerList[count] = (char*)malloc(sizeof(line));
+		customerList = (char **)realloc(customerList, (count + 1) * sizeof(char *));
+		customerList[count] = (char *)malloc(sizeof(line));
 		strcpy(customerList[count], line);
 		strtok(customerList[count], "\n");
 		count++;
@@ -566,9 +566,9 @@ char** Readfile(const char* filename)
 }
 
 // Đếm số dòng của 1 file
-int countLine(const char* filename)
+int countLine(const char *filename)
 {
-	FILE* R;
+	FILE *R;
 	char c;
 	// char line[100];
 	// char **CustomerList;
@@ -601,7 +601,6 @@ void Ticket(int id2, int original)
 	printf("\t\t\t			Time      : %s\n", person[num].time);
 	printf("\t Seat Class: %-12s            	Seats No. : %d  \n", person[num].class, person[num].seat);
 	printf("\t Original price: %d      		Total price (including fee) : %d  \n\n", original, person[num].totalPrice);
-	//person[num].id = id2;
 	printf("\t=====================================================================\n");
 	return;
 }
@@ -609,8 +608,8 @@ void Ticket(int id2, int original)
 //Print each ticket into a ticket file
 void Cusfile(int id2)
 {
-	FILE* C;
-	FILE* D;
+	FILE *C;
+	FILE *D;
 	char filename[20];
 	char directory[300];
 	char s[300];
@@ -619,7 +618,7 @@ void Cusfile(int id2)
 	strcat(directory, filename);
 	C = fopen(directory, "w");
 	sprintf(s, "%s\n%s\n%s\n%s\n%s\n%d\n%d", person[num].route, person[num].name, person[num].identity,
-		person[num].purchaseDate, person[num].flightDate, person[num].seat, person[num].totalPrice);
+			person[num].purchaseDate, person[num].flightDate, person[num].seat, person[num].totalPrice);
 	fputs(s, C);
 
 	//Print customer list into Customer.txt
@@ -635,7 +634,7 @@ void RouteList()
 {
 	int i = 0, count = 0;
 	char line[50];
-	FILE* f;
+	FILE *f;
 	f = fopen("FlightSchedule.txt", "r");
 	if (!f)
 		printf("cannot open file");
@@ -655,7 +654,7 @@ void RouteList()
 }
 
 //Get system time
-void GetSystemDate(int* d, int* m, int* y)
+void GetSystemDate(int *d, int *m, int *y)
 {
 	SYSTEMTIME stime;
 	GetLocalTime(&stime);
@@ -667,12 +666,10 @@ void GetSystemDate(int* d, int* m, int* y)
 //find weekday of flight date using Sakamoto's method
 int Weekday(int d, int m, int y)
 {
-	int t[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
+	int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
 	y -= m < 3;
 	return (y + y / 4 - y / 100 + y / 400 + t[m - 1] + d) % 7;
 }
-
-//calculate date difference
 
 // Counts number of leap years before the given date
 int countLeapYears(struct Date d)
@@ -706,7 +703,6 @@ int DateDifference(struct Date dt1, struct Date dt2)
 int ValidateTime(int dd, int mm, int yy)
 {
 	int validate = 0;
-
 	//Check validation of dd, mm ,yy
 	//check year
 	if (yy >= 1900 && yy <= 2030)
@@ -764,7 +760,7 @@ int CompareTime(int dd, int mm, int yy, int cd, int cm, int cy)
 	return validate;
 }
 
-int isSameFlight(char* route, char* flightDate, char* filename)
+int isSameFlight(char *route, char *flightDate, char *filename)
 {
 	if (strcmp(route, getithline(filename, 1)) == 0 && strcmp(flightDate, getithline(filename, 5)) == 0)
 	{
@@ -773,23 +769,23 @@ int isSameFlight(char* route, char* flightDate, char* filename)
 	return 0;
 }
 
-int* getBookedSeat(char* route, char* flightDate, int *seatCardinality)
+int *getBookedSeat(char *route, char *flightDate, int *seatCardinality)
 {
-	int* s;
-	s = (int*)malloc(2 * sizeof(int));
+	int *s;
+	s = (int *)malloc(2 * sizeof(int));
 	s[0] = 100;
 	*seatCardinality = 0;
 	int seatCount = 0;
-	char** ticketList;
-	char* tmp;
+	char **ticketList;
+	char *tmp;
 	ticketList = Readfile("Customer.txt");
 	for (int i = 0; i < countLine("Customer.txt") - 1; i++)
 	{
 		if (isSameFlight(route, flightDate, ticketList[i]) == 1)
 		{
 			seatCount += 1;
-			*seatCardinality+=1;
-			s = (int*)realloc(s, seatCount * sizeof(int));
+			*seatCardinality += 1;
+			s = (int *)realloc(s, seatCount * sizeof(int));
 			tmp = getithline(ticketList[i], 6);
 			strtok(tmp, "\n");
 			s[seatCount - 1] = atoi(tmp);
