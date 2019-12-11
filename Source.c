@@ -560,8 +560,6 @@ char **Readfile(const char *filename)
 		strcpy(customerList[count], line);
 		strtok(customerList[count], "\n");
 		count++;
-		//CustomerList[count-1][strcspn(CustomerList[count], "\n")] = '\0';
-		// (*count)++;
 	}
 	fclose(R);
 	// Trả các tên file trong Cusfile về CustomerList
@@ -573,9 +571,6 @@ int countLine(const char *filename)
 {
 	FILE *R;
 	char c;
-	// char line[100];
-	// char **CustomerList;
-	// CustomerList = (char **)malloc(sizeof(char *));
 	int count = 1;
 	R = fopen(filename, "r");
 	if (!R)
@@ -585,6 +580,7 @@ int countLine(const char *filename)
 		if (c == '\n')
 			count++;
 	}
+	fclose(R);
 	return count;
 }
 
