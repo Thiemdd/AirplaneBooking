@@ -115,4 +115,4 @@ int main()
     no = getBookedSeat("Hanoi - HCM City", "2/2/2020");
     printf("%d", no[0]);
     return 0;
-}
+} 
