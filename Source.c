@@ -5,10 +5,6 @@
 #include <Windows.h>
 #include "Declaration.h"
 #include "Struct.c"
-//to-do list: Tách file ra để code dễ đọc hơn
-//Viết code để không cho trùng id, dùng getithline
-//Viết lại RouteList dùng char** giống ReadFile
-//phần của thiêm mà xong là phải sửa lại code, sửa lại mảng seat, sửa lại tham số truyền vào booking
 
 // To store number of days in all months from January to Dec
 int monthDays[12] = { 31, 28, 31, 30, 31, 30,
