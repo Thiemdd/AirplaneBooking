@@ -5,6 +5,10 @@
 #include <Windows.h>
 #include "Declaration.h"
 #include "Struct.c"
+//to-do list: Tách file ra để code dễ đọc hơn
+//Viết code để không cho trùng id, dùng getithline
+//Viết lại RouteList dùng char** giống ReadFile
+//phần của thiêm mà xong là phải sửa lại code, sửa lại mảng seat, sửa lại tham số truyền vào booking
 
 // To store number of days in all months from January to Dec
 int monthDays[12] = {31, 28, 31, 30, 31, 30,
@@ -14,19 +18,17 @@ char fRoute[10][30];
 
 struct TicketForm person[300];
 
-int num = 0;
-//  id2 = 1000;
+int num = 0, id2 = 1000;
 
 //Main
-int mainn()
+int main()
 {
-	int choice1, choice2, **seat, i, price = 0;
+	int choice1, choice2, **seat, i, originalPrice = 0;
 	seat = (int **)calloc(49, sizeof(int *));
 	for (i = 0; i < 6; i++)
 		*(seat + i) = (int *)calloc(49, sizeof(int));
 	int x = 0;
 	char idc[30];
-
 	RouteList();
 
 	while (x != 6)
@@ -38,20 +40,17 @@ int mainn()
 			ChangePrice();
 			break;
 		case 3:
-			ReservedTicket(price);
-			// readCusfile();
+			ReservedTicket();
 			break;
 		case 4:
-			choice2 = Choice(&price);
-			Booking(seat[choice2 - 1], choice2, price);
+			choice2 = Choice(&originalPrice);
+			Booking(seat[choice2 - 1], choice2, originalPrice);
 			num++;
-			printf("Success");
-			system("pause");
 			break;
 		case 5:
 			printf("Enter your ticket ID: ");
 			scanf("%s", &idc);
-			Delfile(idc);
+			Cancel(idc);
 			break;
 		case 6:
 			x = 6;
@@ -60,17 +59,46 @@ int mainn()
 			break;
 		default:
 			printf("Choice not available\n");
-			system("cls");
+			break;
 		}
-		break;
 	}
 	free(seat);
+}
+
+// Lấy ra dòng thứ i của 1 file
+char *getithline(char fileName[50], int targetLine)
+{
+	FILE *S;
+	// Lấy ra đường dẫn
+	char directory[200] = "";
+	strcpy(directory, ".\\Tickets\\");
+	strcat(directory, fileName);
+	// Vị trí của dòng hiện tại
+	int tmpcount = 1;
+	// Dòng lấy ra được lưu vào đây
+	char *line = (char *)malloc(200 * sizeof(char));
+	// Mở file
+	S = fopen(directory, "r+");
+	// Đọc lần lượt từng dòng cho đến hết
+	while (fgets(line, 100 * sizeof(char), S))
+	{
+		// Tại vị trí dòng cần đọc, thực hiện nhánh 'if'
+		if (tmpcount == targetLine)
+		{
+			strtok(line, "\n");
+			break;
+		}
+		tmpcount++;
+	}
+	fclose(S);
+	// Trả về giá trị của dòng cần trích thông tin
+	return line;
 }
 
 //Print choices
 int Menu()
 {
-	int choice1;
+	int choice1 = 0;
 	printf("Please choose your option: ");
 	printf("\n                 Simple Flight Ticket Booking System\n");
 	printf(" ==================================================================\n");
@@ -82,6 +110,7 @@ int Menu()
 	printf("||             6- Exit system:                                    ||\n");
 	printf("||================================================================||\n");
 	printf("  Enter your choice: ");
+	fflush(stdin);
 	scanf("%d", &choice1);
 	return choice1;
 }
@@ -93,9 +122,9 @@ void ChangePrice()
 	FILE *f;
 	FILE *fTemp;
 	char buffer[100], nPrice[10];
-	char path[20] = "FlightSchedule.txt";
+	char path[] = "FlightSchedule.txt";
 	int line = 0, count = 0;
-	char pass[20], pak[20] = "pass";
+	char pass[20], pak[] = "pass";
 
 	printf("Enter the password:  ");
 	scanf("%s", &pass);
@@ -107,9 +136,9 @@ void ChangePrice()
 			printf("\t%d. %-30s %d. %-30s\n", j + 1, fRoute[j], j + 2, fRoute[j + 1]);
 		}
 		scanf("%d", &set);
-		if (set < 1 && set > 6)
+		while (set < 1 || set > 6)
 		{
-			printf("\nChoice is invalid, please choice another option: ");
+			printf("\nChoice is invalid, please choose another option: ");
 			scanf("%d", &set);
 		}
 		strcat(fRoute[set - 1], "\n");
@@ -118,8 +147,8 @@ void ChangePrice()
 			printf("cannot open file");
 		fTemp = fopen("replace.tmp", "w");
 		printf("Set the new price for the route: ");
-		scanf("%s", &nPrice);
 		fflush(stdin);
+		scanf("%s", &nPrice);
 		while (strcmp(fRoute[set - 1], fgets(buffer, sizeof(buffer), f)) != 0)
 		{
 			line++;
@@ -152,9 +181,10 @@ void ChangePrice()
 //Route choice
 int Choice(int *price)
 {
-	int choice = 0, i = 0, count = 0, j = 0, tPrice = 0;
+	int i = 0, count = 0, j = 0, choice = 0;
 	char line[50];
-	FILE *f;
+
+	//choose route
 	printf("Please choose the route: \n");
 	for (j = 0; j < 6; j = j + 2)
 	{
@@ -162,14 +192,15 @@ int Choice(int *price)
 	}
 	printf("\nType in your option: ");
 	scanf("%d", &choice);
-	if (choice < 1 && choice > 6)
+	while (choice < 1 || choice > 6)
 	{
-		printf("\nChoice is invalid, please choice another option: ");
+		printf("\nChoice is invalid, please choose another option: ");
 		scanf("%d", &choice);
 	}
 	strcpy(person[num].route, fRoute[choice - 1]);
 
 	//Get price of the route
+	FILE *f;
 	f = fopen("FlightSchedule.txt", "r");
 	if (!f)
 		printf("cannot open file");
@@ -182,17 +213,54 @@ int Choice(int *price)
 		}
 	}
 	fclose(f);
+
+	//Get flight schedule
+	count = 0;
+	f = fopen("FlightSchedule.txt", "r");
+	if (!f)
+		printf("cannot open file");
+	while (fgets(line, sizeof(line), f))
+	{
+		count++;
+		if (count == (5 + (choice - 1) * 5))
+		{
+			line[strcspn(line, "\n")] = 0;
+			sprintf(person[num].time, line);
+		}
+	}
+	printf("flight time: %s", person[num].time);
+	fclose(f);
 	return choice;
 }
 
 //booking ticket
-void Booking(int *array, int choice, int price)
+void Booking(int *array, int choice, int oPrice)
 {
-	int i, j, currentD, currentM, currentY, d, m, y;
-	printf("\nWhat day you want to depart? (DD/MM/YYYY): "); //Se phai viet them code dieu kien
-															 //cho ngay thang nam nhap vao
-	scanf("%d%*c%d%*c%d", &d, &m, &y);
-	fflush(stdin);
+	struct Date current, flight;
+	int i, j, validate = 0;
+	float price = 0;
+	GetSystemDate(&current.d, &current.m, &current.y);
+	sprintf(person[num].purchaseDate, "%d/%d/%d", current.d, current.m, current.y);
+	do
+	{
+		printf("\nFlight date (DD/MM/YYYY): ");
+		scanf("%d%*c%d%*c%d", &flight.d, &flight.m, &flight.y);
+		validate = ValidateTime(flight.d, flight.m, flight.y);
+		while (validate == 0)
+		{
+			printf("\nDate invalid. Please type again");
+			printf("\nFlight date (DD/MM/YYYY): ");
+			scanf("%d%*c%d%*c%d", &flight.d, &flight.m, &flight.y);
+			validate = ValidateTime(flight.d, flight.m, flight.y);
+		}
+		validate = CompareTime(flight.d, flight.m, flight.y, current.d, current.m, current.y);
+		if (validate == 0)
+			printf("\nDate invalid. Please type again");
+	} while (validate == 0);
+
+	sprintf(person[num].purchaseDate, "%d/%d/%d", current.d, current.m, current.y);
+	sprintf(person[num].flightDate, "%d/%d/%d", flight.d, flight.m, flight.y);
+
 	printf("\nPlease enter your name: ");
 	scanf(" %19[^\n]%*[^\n]", &person[num].name);
 	printf("Please enter your identity number: ");
@@ -220,55 +288,188 @@ void Booking(int *array, int choice, int price)
 		if (i % 4 == 0)
 			printf("\n");
 	}
-	printf("\nWhich seat number you want? \n");
-	scanf("%d", &j);
-	if (j > 48 || j < 1)
+
+	int valiseat = 0;
+	do
 	{
-		printf("Seat number is unavailable in this flight\n");
-		printf("Please re-enter seat number: ");
+		printf("\nWhich seat number do you want? \n");
 		scanf("%d", &j);
-	}
-	if (array[j] == 1)
-	{
-		printf("Sorry, this ticket is already booked! Please choose another seat.\n");
-		scanf("%d", &j);
-	}
-	else
-		array[j] = 1;
+		if (j > 48 || j < 1)
+			valiseat = 0;
+		else
+			valiseat = 1;
+		while (valiseat == 0)
+		{
+			printf("Sorry, this seat is unavailable! Please choose another seat.\n");
+			printf("Please re-enter seat number: ");
+			scanf("%d", &j);
+			if (j > 48 || j < 1)
+				valiseat = 0;
+			else
+				valiseat = 1;
+		}
+		if (array[j] == 1)
+		{
+			printf("Sorry, this seat is unavailable! Please choose another seat.\n");
+			valiseat = 0;
+		}
+		else
+			valiseat = 1;
+	} while (valiseat == 0);
+
+	array[j] = 1;
+
 	person[num].seat = j;
 	if (j >= 1 && j <= 16)
 		strcpy(person[num].class, "Business");
 	if (j >= 17 && j <= 48)
 		strcpy(person[num].class, "Economy");
+	price = TotalPrice(oPrice, current, flight);
 
-	GetSystemDate(&currentD, &currentM, &currentY);
-	Ticket(person[num].route, person[num].name, person[num].identity, j, price, currentD, currentM, currentY, d, m, y);
-	Cusfile(person[num].route, person[num].name, person[num].identity, j, price, currentD, currentM, currentY, d, m, y);
+	person[num].totalPrice = price;
+
+	Ticket(id2, oPrice);
+	Cusfile(id2);
+	id2++;
+	system("pause");
+	system("cls");
+}
+
+/*
+//calculate totalprice___Code cua Den ngu lol
+float TotalPrice(int original, struct Date dt1, struct Date dt2)
+{
+	int w, delta = 0;
+	int total = 0;
+	//int p, w, delta = 0;
+	w = Weekday(dt1.d, dt1.m, dt1.y);
+	delta = DateDifference(dt1, dt2);
+	if (w == 0 || w == 5 || w == 6)
+	{
+		if (strcmp(person[num].class, "Business") == 0)
+		{
+			total = original * (1 + 30 / 100 + 10 / 100 - delta / 200);
+		}
+		else if (strcmp(person[num].class, "Economy") == 0)
+		{
+			total = original * (1 + 10 / 100 + 10 / 100 - delta / 200);
+		}
+	}
+	else
+	{
+		if (strcmp(person[num].class, "Business") == 0)
+		{
+			total = original * (1 + 30 / 100 - delta / 200);
+		}
+		else if (strcmp(person[num].class, "Economy") == 0)
+		{
+			total = original * (1 + 10 / 100 - delta / 200);
+		}
+	}
+	return total;
+}
+*/
+
+float TotalPrice(int original, struct Date dt1, struct Date dt2)
+{
+	int week, delta = 0;
+	int total = 0;
+	float fee1, fee2, fee3;
+	//int p, w, delta = 0;
+	week = Weekday(dt1.d, dt1.m, dt1.y);
+	delta = DateDifference(dt1, dt2);
+
+	if ((week == 0) || (week == 5) || (week == 6))
+		fee1 = original * 30 / 100;
+	else
+		fee1 = 0;
+
+	if (delta <= 30)
+		fee2 = original * 10 / 100;
+	else if (delta > 30 && delta <= 60)
+		fee2 = original * 7 / 100;
+	else
+		fee2 = 0;
+
+	if (strcmp(person[num].class, "Business") == 0)
+		fee3 = original * 20 / 100;
+	else
+		fee3 = 0;
+	total = original + fee1 + fee2 + fee3;
+	return total;
+}
+
+//Cancel the ticket
+void Cancel(char identity[30])
+{
+	FILE *f;
+	FILE *fTemp;
+	char buffer[30];
+	int line = 0, count = 0;
+	char path[] = "Customer.txt";
+	char filename[20];
+	char directory[300];
+	sprintf(filename, "%s.txt", identity);
+	strcpy(directory, ".\\Tickets\\");
+	strcat(directory, filename);
+	if (remove(directory) == 0)
+		printf("Cancel ticket successfully!\n");
+
+	f = fopen(path, "r");
+	if (!f)
+		printf("cannot open file");
+	fTemp = fopen("replace.tmp", "w");
+
+	strcat(filename, "\n");
+	while (strcmp(filename, fgets(buffer, sizeof(buffer), f)) != 0)
+	{
+		line++;
+	}
+	rewind(f);
+	while (fgets(buffer, sizeof(buffer), f))
+	{
+		count++;
+		if (count == line + 1)
+		{
+		}
+		else
+			fputs(buffer, fTemp);
+	}
+	fclose(f);
+	fclose(fTemp);
+	remove(path);
+	rename("replace.tmp", path);
+	system("pause");
+	system("cls");
 }
 
 //Reserved ticket
-void ReservedTicket(int price)
+void ReservedTicket()
 {
-	int count = 0;
-	int i;
-	char fileName[200];
-	char pass[10], pak[10] = "pass";
+	char pass[10], pak[] = "pass";
+	char path[] = "Customer.txt";
+	char *line1;
+	char *line2;
+	char *line3;
+	char *line5;
+	char *line6;
+	char **arrfilenames;
 	printf("Enter the password to see details: ");
 	scanf("%s", &pass);
 	if (strcmp(pass, pak) == 0)
 	{
-		if (count == 0)
-			printf("There is no ticket booked yet\n");
-		else
-			for (i = 0; i < count; i++)
-			{
-				FILE *Y;
-				char directory[200] = "";
-				strcat(directory, ".\\Tickets\\");
-				strcat(directory, fileName);
-				Y = fopen(directory, "r");
-				printf("seat no: %d is booked by %s booking id is %d, ticket price: %d\n", person[i].seat, person[i].name, person[i].id, price);
-			}
+		arrfilenames = Readfile(path);
+
+		for (int i = 0; i < (countLine(path) - 1); i++)
+		{
+			// Lưu dòng thứ i của tất cả các file có trong Customer.txt vào linei
+			line1 = getithline(arrfilenames[i], 1);
+			line2 = getithline(arrfilenames[i], 2);
+			line3 = getithline(arrfilenames[i], 3);
+			line5 = getithline(arrfilenames[i], 5);
+			line6 = getithline(arrfilenames[i], 6);
+			printf("\nCustomer '%s', ID number '%s', booked seat '%s' on the route '%s', flight date: %s\n", line2, line3, line6, line1, line5);
+		}
 	}
 	else
 		printf("Entered password is wrong \n");
@@ -276,30 +477,98 @@ void ReservedTicket(int price)
 	system("cls");
 }
 
+// Đọc tất cả các dòng trong Customer.txt và lưu vào 1 mảng
+char **Readfile(const char *filename)
+{
+	FILE *R;
+	char line[100];
+	char **customerList;
+	customerList = (char **)malloc(sizeof(char *));
+	int count = 0;
+	R = fopen(filename, "r");
+	while (fgets(line, sizeof(line), R))
+	{
+		customerList = (char **)realloc(customerList, (count + 1) * sizeof(char *));
+		customerList[count] = (char *)malloc(sizeof(line));
+		strcpy(customerList[count], line);
+		strtok(customerList[count], "\n");
+		count++;
+		//CustomerList[count-1][strcspn(CustomerList[count], "\n")] = '\0';
+		// (*count)++;
+	}
+	fclose(R);
+	// Trả các tên file trong Cusfile về CustomerList
+	return customerList;
+}
+
+// Đếm số dòng của 1 file
+int countLine(const char *filename)
+{
+	FILE *R;
+	char c;
+	// char line[100];
+	// char **CustomerList;
+	// CustomerList = (char **)malloc(sizeof(char *));
+	int count = 1;
+	R = fopen(filename, "r");
+	if (!R)
+		printf("cannot open file");
+	for (c = fgetc(R); c != EOF; c = fgetc(R))
+	{
+		if (c == '\n')
+			count++;
+	}
+	return count;
+}
+
 //Ticket
-void Ticket(char route[30], char name[30], char identity[30], int seat, int price, int cd, int cm, int cy, int d, int m, int y)
+void Ticket(int id2, int original)
 {
 	system("cls");
+	printf("\n\n\n");
 	printf("\t                     Booking ticket successfully!");
 	printf("\n\n");
-	printf("\t       ---------------------AIRPLANE TICKET-------------------\n");
+	printf("\t        ------------------AIRPLANE TICKET-----------------\n");
 	printf("\t=====================================================================\n");
-	printf("\t Booking ID : %s\t\t\tRoute : %s\n", person[num].identity, person[num].route);
-	printf("\t Customer  : %s\n", person[num].name);
-	printf("\t\t\t                       Purchase Date    : %d/%d/%d\n", cd, cm, cy);
-	printf("\t\t\t                       Flight Date      : %d/%d/%d\n", d, m, y);
-	printf("\t                                              Time      : 08:00pm\n");
-	printf("\t Seat Class: %-12s                     Seats No. : %d  \n", person[num].class, seat);
-	printf("\t                                              Price     : %d  \n\n", price);
-	// person[num].id = id2;
+	printf("\t Booking ID : %s         	 Route : %s\n", person[num].identity, person[num].route);
+	printf("\t Customer   : %s\n", person[num].name);
+	printf("\t\t\t                       Purchase Date    : %s\n", person[num].purchaseDate);
+	printf("\t\t\t                       Flight Date      : %s\n", person[num].flightDate);
+	printf("\t\t\t			Time      : %s\n", person[num].time);
+	printf("\t Seat Class: %-12s            	Seats No. : %d  \n", person[num].class, person[num].seat);
+	printf("\t Original price: %d      		   Total price (including fee) : %d  \n\n", original, person[num].totalPrice);
+	//person[num].id = id2;
 	printf("\t=====================================================================\n");
 	return;
+}
+
+//Print each ticket into a ticket file
+void Cusfile(int id2)
+{
+	FILE *C;
+	FILE *D;
+	char filename[20];
+	char directory[300];
+	char s[300];
+	sprintf(filename, "%s.txt", person[num].identity);
+	strcpy(directory, ".\\Tickets\\");
+	strcat(directory, filename);
+	C = fopen(directory, "w");
+	sprintf(s, "%s\n%s\n%s\n%s\n%s\n%d\n%d", person[num].route, person[num].name, person[num].identity,
+			person[num].purchaseDate, person[num].flightDate, person[num].seat, person[num].totalPrice);
+	fputs(s, C);
+
+	//Print customer list into Customer.txt
+	D = fopen("Customer.txt", "a+");
+	strcat(filename, "\n");
+	fputs(filename, D);
+	fclose(C);
+	fclose(D);
 }
 
 //Get route list from file and assign to array
 void RouteList()
 {
-	//Get route list
 	int i = 0, count = 0;
 	char line[50];
 	FILE *f;
@@ -369,40 +638,64 @@ int DateDifference(struct Date dt1, struct Date dt2)
 	return (n2 - n1);
 }
 
-//Print each ticket into a ticket file
-
-int idx = 0;
-
-void Cusfile(char route[30], char name[30], char identity[30], int seat, int price, int currentD, int currentM, int currentY, int d, int m, int y)
+// validate date (Check date is valid or not)
+int ValidateTime(int dd, int mm, int yy)
 {
-	FILE *C;
-	FILE *D;
-	char filename[20];
-	char directory[300];
-	char s[300];
-	char r[100];
-	sprintf(filename, "%s.txt", identity);
-	strcat(directory, ".\\Tickets\\");
-	strcat(directory, filename);
-	C = fopen(directory, "w+");
-	sprintf(s, "%s\n%s\n%s\n%d/%d/%d\n%d/%d/%d\n%d\n%d", route, name, identity, currentD, currentM, currentY, d, m, y, seat, price);
-	fputs(s, C);
-	//Print customer list into Customer.txt
-	D = fopen("Customer.txt", "a+");
-	strcat(filename, "\n");
-	fputs(filename, D);
-	fclose(C);
-	fclose(D);
+	int validate = 0;
+
+	//Check validation of dd, mm ,yy
+	//check year
+	if (yy >= 1900 && yy <= 2030)
+	{
+		//check month
+		if (mm >= 1 && mm <= 12)
+		{
+			//check days
+			if ((dd >= 1 && dd <= 31) && (mm == 1 || mm == 3 || mm == 5 || mm == 7 || mm == 8 || mm == 10 || mm == 12))
+				validate = 1;
+			else if ((dd >= 1 && dd <= 30) && (mm == 4 || mm == 6 || mm == 9 || mm == 11))
+				validate = 1;
+			else if ((dd >= 1 && dd <= 28) && (mm == 2))
+				validate = 1;
+			else if (dd == 29 && mm == 2 && (yy % 400 == 0 || (yy % 4 == 0 && yy % 100 != 0)))
+				validate = 1;
+			else
+				validate = 0;
+		}
+		else
+		{
+			validate = 0;
+		}
+	}
+	else
+	{
+		validate = 0;
+	}
+
+	return validate;
 }
 
-//Cancel the ticket
-void Delfile(char identity[30])
+//compare to current date
+int CompareTime(int dd, int mm, int yy, int cd, int cm, int cy)
 {
-	char filename[20];
-	char directory[300];
-	sprintf(filename, "%s.txt", identity);
-	strcat(directory, ".\\Tickets\\");
-	strcat(directory, filename);
-	if (remove(directory) == 0)
-		printf("Cancel ticket successfully!\n");
+	int validate = 0;
+	if (yy == cy)
+	{
+		if (mm > cm)
+			validate = 1;
+		else if (mm == cm)
+		{
+			if (dd >= cd)
+				validate = 1;
+			else
+				validate = 0;
+		}
+		else
+			validate = 0;
+	}
+	else if (yy > cy)
+		validate = 1;
+	else
+		validate = 0;
+	return validate;
 }

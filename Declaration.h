@@ -1,20 +1,26 @@
 #pragma once
 
 int Menu(void);
-int Choice(int *);
+int Choice(int*);
 void ChangePrice();
 int ChangeFightDate();
-void ReservedTicket(int);
-int TotalPrice();
-void Booking(int *, int, int);
-void Cancel();
-void Ticket(char[30], char[30], char[30], int, int, int, int, int, int, int, int);
-void RouteList();
-void GetSystemDate(int *, int *, int *);
+void ReservedTicket();
+float TotalPrice(int, struct Date dt1, struct Date dt2);
+void Booking(int*, int, int);
+void Cancel(char[30]);
+void Ticket(int, int);
+void Cusfile(int);
+
+
+//other small function
+
+char** Readfile(const char*);
+char* getithline(char[50], int);
+int countLine(const char*);
+void RouteList(void);
+void GetSystemDate(int*, int*, int*);
 int Weekday(int, int, int);
-int DateDifference();
-char **readCusfile(int *);
-char *getithline(char, int);
-int *GetInfor(int);
-void Cusfile(char[30], char[30], char[30], int, int, int, int, int, int, int, int);
-void Delfile(char[30]);
+int countLeapYears(struct Date d);
+int DateDifference(struct Date dt1, struct Date dt2);
+int ValidateTime(int, int, int);
+int CompareTime(int, int, int, int, int, int);

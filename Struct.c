@@ -1,25 +1,17 @@
-#include <stdio.h>
+#include<stdio.h>
 
-struct Date
-{
+struct Date {
 	int d, m, y;
 };
-struct TicketForm
-{
+struct TicketForm {
 	int id;
+	int seat;
+	int totalPrice;
 	char purchaseDate[15];
 	char flightDate[15];
 	char name[30];
-	char identity[20];
-	int seat;
+	char identity[30];
 	char route[30];
 	char class[10];
-	int price;
 	char time[10];
-};
-struct Flight
-{
-	int seat;
-	char route[30];
-	char flightDate[15];
 };
