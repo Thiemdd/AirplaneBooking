@@ -108,7 +108,7 @@ int Menu()
 	printf("||             4- To book ticket:                                 ||\n");
 	printf("||             5- To cancel the ticket:                           ||\n");
 	printf("||             6- Exit system:                                    ||\n");
-	printf("||================================================================||\n");
+	printf(" ==================================================================\n");
 	printf("  Enter your choice: ");
 	fflush(stdin);
 	scanf("%d", &choice1);
@@ -171,6 +171,90 @@ void ChangePrice()
 		rename("replace.tmp", path);
 		fRoute[set - 1][strcspn(fRoute[set - 1], "\n")] = 0;
 		printf("Price of the flight '%s' has been change to %s\n", fRoute[set - 1], nPrice);
+		system("pause");
+		system("cls");
+	}
+	else
+		printf("The entered password is wrong!\n\n");
+}
+//change flight time
+void ChangeTime()
+{
+	int set = 0, i, j = 0, hour, min;
+	FILE *f;
+	FILE *fTemp;
+	char buffer[100], nTime[10], apm[10];
+	char path[] = "FlightSchedule.txt";
+	int line = 0, count = 0;
+	char pass[20], pak[] = "pass";
+
+	printf("Enter the password:  ");
+	scanf("%s", &pass);
+	if (strcmp(pass, pak) == 0)
+	{
+		printf("Choose the route you want to change flight time: \n");
+		for (j = 0; j < 6; j = j + 2)
+		{
+			printf("\t%d. %-30s %d. %-30s\n", j + 1, fRoute[j], j + 2, fRoute[j + 1]);
+		}
+		scanf("%d", &set);
+		while (set < 1 || set > 6)
+		{
+			printf("\nChoice is invalid, please choose another option: ");
+			scanf("%d", &set);
+		}
+		strcat(fRoute[set - 1], "\n");
+		f = fopen(path, "r");
+		if (!f)
+			printf("cannot open file");
+		fTemp = fopen("replace.tmp", "w");
+		printf("Set the new flight time for the route (HH:MM - 12 hour format ): ");
+		fflush(stdin);
+		scanf("%d%*c%d", &hour, &min);
+		while (((hour < 1) || (hour > 12)) || ((min < 1) || (min > 59)))
+		{
+			printf("\nTime invalid");
+			printf("Set the new flight time for the route (HH:MM - 12 hour format ): ");
+			fflush(stdin);
+			scanf("%d%*c%d", &hour, &min);
+		}
+
+		printf("1: AM                   2. PM\n");
+		scanf("%d", &i);
+
+		while (i < 1 || i > 2)
+		{
+			printf("Choice not available!\n");
+			printf("1: AM                   2. PM\n");
+			scanf("%d", &i);
+		}
+		if (i == 1)
+			strcpy(apm, "AM");
+		if (i == 2)
+			strcpy(apm, "PM");
+		sprintf(nTime, "%d:%d %s", hour, min, apm);
+		while (strcmp(fRoute[set - 1], fgets(buffer, sizeof(buffer), f)) != 0)
+		{
+			line++;
+		}
+		rewind(f);
+		while (fgets(buffer, sizeof(buffer), f))
+		{
+			count++;
+			if (count == line + 3)
+			{
+				fputs(nTime, fTemp);
+				fputs("\n", fTemp);
+			}
+			else
+				fputs(buffer, fTemp);
+		}
+		fclose(f);
+		fclose(fTemp);
+		remove(path);
+		rename("replace.tmp", path);
+		fRoute[set - 1][strcspn(fRoute[set - 1], "\n")] = 0;
+		printf("time of the flight '%s' has been change to %s\n", fRoute[set - 1], nTime);
 		system("pause");
 		system("cls");
 	}
@@ -334,41 +418,6 @@ void Booking(int *array, int choice, int oPrice)
 	system("pause");
 	system("cls");
 }
-
-/*
-//calculate totalprice___Code cua Den ngu lol
-float TotalPrice(int original, struct Date dt1, struct Date dt2)
-{
-	int w, delta = 0;
-	int total = 0;
-	//int p, w, delta = 0;
-	w = Weekday(dt1.d, dt1.m, dt1.y);
-	delta = DateDifference(dt1, dt2);
-	if (w == 0 || w == 5 || w == 6)
-	{
-		if (strcmp(person[num].class, "Business") == 0)
-		{
-			total = original * (1 + 30 / 100 + 10 / 100 - delta / 200);
-		}
-		else if (strcmp(person[num].class, "Economy") == 0)
-		{
-			total = original * (1 + 10 / 100 + 10 / 100 - delta / 200);
-		}
-	}
-	else
-	{
-		if (strcmp(person[num].class, "Business") == 0)
-		{
-			total = original * (1 + 30 / 100 - delta / 200);
-		}
-		else if (strcmp(person[num].class, "Economy") == 0)
-		{
-			total = original * (1 + 10 / 100 - delta / 200);
-		}
-	}
-	return total;
-}
-*/
 
 float TotalPrice(int original, struct Date dt1, struct Date dt2)
 {
@@ -536,7 +585,7 @@ void Ticket(int id2, int original)
 	printf("\t\t\t                       Flight Date      : %s\n", person[num].flightDate);
 	printf("\t\t\t			Time      : %s\n", person[num].time);
 	printf("\t Seat Class: %-12s            	Seats No. : %d  \n", person[num].class, person[num].seat);
-	printf("\t Original price: %d      		   Total price (including fee) : %d  \n\n", original, person[num].totalPrice);
+	printf("\t Original price: %d      		Total price (including fee) : %d  \n\n", original, person[num].totalPrice);
 	//person[num].id = id2;
 	printf("\t=====================================================================\n");
 	return;
