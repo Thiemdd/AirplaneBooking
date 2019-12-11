@@ -32,6 +32,9 @@ int main()
 		case 1:
 			ChangePrice();
 			break;
+		case 2: 
+			ChangeTime();
+			break;
 		case 3:
 			ReservedTicket();
 			break;

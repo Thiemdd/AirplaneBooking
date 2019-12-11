@@ -3,7 +3,7 @@
 int Menu(void);
 int Choice(int *);
 void ChangePrice();
-int ChangeFightDate();
+void ChangeTime();
 void ReservedTicket();
 float TotalPrice(int, struct Date, struct Date);
 void Booking(int, int);
