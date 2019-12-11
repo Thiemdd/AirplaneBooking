@@ -486,8 +486,8 @@ void Cancel(char identity[30])
 	}
 	fclose(f);
 	fclose(fTemp);
-	remove(path);
-	rename("replace.tmp", path);
+	remove("Customer.txt");
+	rename("replace.tmp", "Customer.txt");
 	system("pause");
 	system("cls");
 }
