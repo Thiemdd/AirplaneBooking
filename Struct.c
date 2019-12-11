@@ -1,9 +1,11 @@
-#include<stdio.h>
+#include <stdio.h>
 
-struct Date {
+struct Date
+{
 	int d, m, y;
 };
-struct TicketForm {
+struct TicketForm
+{
 	int id;
 	int seat;
 	int totalPrice;
@@ -14,4 +16,10 @@ struct TicketForm {
 	char route[30];
 	char class[10];
 	char time[10];
+};
+struct Flight
+{
+	int seat;
+	char route[30];
+	char flightDate[15];
 };

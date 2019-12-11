@@ -1,16 +1,12 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
 #include <string.h>
-#include <Windows.h>
-#include "Declaration.h"
-#include "Struct.c"
 
 // struct Flight sameflight[100];
 
 // Đọc tất cả các dòng trong Customer.txt và lưu vào 1 mảng
-char **readfile(const char *filename)
+char **Readfile(char *filename)
 {
     FILE *R;
     char line[100];
@@ -34,7 +30,7 @@ char **readfile(const char *filename)
 }
 
 // Đếm số dòng của 1 file
-int countLine(const char *filename)
+int countLine(char *filename)
 {
     FILE *R;
     char c;
@@ -52,7 +48,7 @@ int countLine(const char *filename)
 }
 
 // Lấy ra dòng thứ i của 1 file
-char *getithline(char fileName[200], int targetLine)
+char *getithline(char *fileName, int targetLine)
 {
     FILE *S;
     // Lấy ra đường dẫn
@@ -81,31 +77,6 @@ char *getithline(char fileName[200], int targetLine)
     return line;
 }
 
-// Lấy ra những ghế đã đặt
-// int mainn()
-// {
-//     char **arrfilenames;
-//     char *line1;
-//     char *line5;
-//     char *s;
-//     int seatCount = 0;
-//     // Đọc tất cả các dòng trong Customer.txt và lưu vào output
-//     arrfilenames = readfile("Customer.txt");
-//     // Vòng lặp đếm tất cả các file trong Customer.txt
-//     for (int i = 0; i < countLine("Customer.txt"); i++)
-//     {
-//         for (int j = 0; j < countLine("Customer.txt"); j++)
-//         {
-//             if ((strcmp(getithline(arrfilenames[j], 1), person[5].route) == 0) && (strcmp(getithline(arrfilenames[j], 5), person.flightDate) == 0))
-//             {
-//                 s = realloc(s, (seatCount + 1) * sizeof(int));
-//                 s[seatCount] = int(getithline(filename[j], 6));
-//             }
-//         }
-//     }
-//     // printf("%s", sameflight);
-// }
-
 int isSameFlight(char *route, char *flightDate, char *filename)
 {
     if (strcmp(route, getithline(filename, 1)) == 0 && strcmp(flightDate, getithline(filename, 5)) == 0)
@@ -117,19 +88,22 @@ int isSameFlight(char *route, char *flightDate, char *filename)
 
 int *getBookedSeat(char *route, char *flightDate)
 {
-    int *s = (int *)malloc(1*sizeof(int));
+    int *s;
+    s = (int *)malloc(1 * sizeof(int));
     s[0] = 100;
     int seatCount = 0;
     char **ticketList;
-    ticketList = readfile("Customer.txt");
-    for (int i = 0; i < countLine("Customer.txt"); i++)
+    char *tmp;
+    ticketList = Readfile("Customer.txt");
+    for (int i = 0; i < countLine("Customer.txt") - 1; i++)
     {
-
         if (isSameFlight(route, flightDate, ticketList[i]) == 1)
         {
-            s[seatCount] = atoi(getithline(ticketList[i], 6));
             seatCount += 1;
             s = (int *)realloc(s, seatCount * sizeof(int));
+            tmp = getithline(ticketList[i], 6);
+            strtok(tmp, "\n");
+            s[seatCount - 1] = atoi(tmp);
         }
     }
     return s;
@@ -137,12 +111,8 @@ int *getBookedSeat(char *route, char *flightDate)
 
 int main()
 {
-    char **ticketList;
-    ticketList = readfile("Customer.txt");
-    int line = countLine("Customer.txt") - 1;
-    int *bookedSeatNo;
-    bookedSeatNo = getBookedSeat("Da Nang - Ha Noi", "2/2/2020");
-    printf("Success");
-    printf("%d", bookedSeatNo[0]);
+    int *no;
+    no = getBookedSeat("Hanoi - HCM City", "2/2/2020");
+    printf("%d", no[0]);
     return 0;
 }

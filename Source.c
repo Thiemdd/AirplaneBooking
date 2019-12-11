@@ -11,8 +11,8 @@
 //phần của thiêm mà xong là phải sửa lại code, sửa lại mảng seat, sửa lại tham số truyền vào booking
 
 // To store number of days in all months from January to Dec
-int monthDays[12] = {31, 28, 31, 30, 31, 30,
-					 31, 31, 30, 31, 30, 31};
+int monthDays[12] = { 31, 28, 31, 30, 31, 30,
+					 31, 31, 30, 31, 30, 31 };
 
 char fRoute[10][30];
 
@@ -23,10 +23,7 @@ int num = 0, id2 = 1000;
 //Main
 int main()
 {
-	int choice1, choice2, **seat, i, originalPrice = 0;
-	seat = (int **)calloc(49, sizeof(int *));
-	for (i = 0; i < 6; i++)
-		*(seat + i) = (int *)calloc(49, sizeof(int));
+	int choice1, choice2, i, originalPrice = 0;
 	int x = 0;
 	char idc[30];
 	RouteList();
@@ -44,7 +41,7 @@ int main()
 			break;
 		case 4:
 			choice2 = Choice(&originalPrice);
-			Booking(seat[choice2 - 1], choice2, originalPrice);
+			Booking(choice2, originalPrice);
 			num++;
 			break;
 		case 5:
@@ -62,13 +59,12 @@ int main()
 			break;
 		}
 	}
-	free(seat);
 }
 
 // Lấy ra dòng thứ i của 1 file
-char *getithline(char fileName[50], int targetLine)
+char* getithline(char fileName[50], int targetLine)
 {
-	FILE *S;
+	FILE* S;
 	// Lấy ra đường dẫn
 	char directory[200] = "";
 	strcpy(directory, ".\\Tickets\\");
@@ -76,7 +72,7 @@ char *getithline(char fileName[50], int targetLine)
 	// Vị trí của dòng hiện tại
 	int tmpcount = 1;
 	// Dòng lấy ra được lưu vào đây
-	char *line = (char *)malloc(200 * sizeof(char));
+	char* line = (char*)malloc(200 * sizeof(char));
 	// Mở file
 	S = fopen(directory, "r+");
 	// Đọc lần lượt từng dòng cho đến hết
@@ -119,8 +115,8 @@ int Menu()
 void ChangePrice()
 {
 	int set = 0, j = 0;
-	FILE *f;
-	FILE *fTemp;
+	FILE* f;
+	FILE* fTemp;
 	char buffer[100], nPrice[10];
 	char path[] = "FlightSchedule.txt";
 	int line = 0, count = 0;
@@ -181,8 +177,8 @@ void ChangePrice()
 void ChangeTime()
 {
 	int set = 0, i, j = 0, hour, min;
-	FILE *f;
-	FILE *fTemp;
+	FILE* f;
+	FILE* fTemp;
 	char buffer[100], nTime[10], apm[10];
 	char path[] = "FlightSchedule.txt";
 	int line = 0, count = 0;
@@ -263,7 +259,7 @@ void ChangeTime()
 }
 
 //Route choice
-int Choice(int *price)
+int Choice(int* price)
 {
 	int i = 0, count = 0, j = 0, choice = 0;
 	char line[50];
@@ -284,7 +280,7 @@ int Choice(int *price)
 	strcpy(person[num].route, fRoute[choice - 1]);
 
 	//Get price of the route
-	FILE *f;
+	FILE* f;
 	f = fopen("FlightSchedule.txt", "r");
 	if (!f)
 		printf("cannot open file");
@@ -318,11 +314,13 @@ int Choice(int *price)
 }
 
 //booking ticket
-void Booking(int *array, int choice, int oPrice)
+void Booking(int choice, int oPrice)
 {
+	int array[48];
+	int seatCardinality;
 	struct Date current, flight;
 	int i, j, validate = 0;
-	float price = 0;
+	int price = 0;
 	GetSystemDate(&current.d, &current.m, &current.y);
 	sprintf(person[num].purchaseDate, "%d/%d/%d", current.d, current.m, current.y);
 	do
@@ -351,26 +349,46 @@ void Booking(int *array, int choice, int oPrice)
 	scanf("%s", &person[num].identity);
 	printf("\n\t\t =========");
 	printf("\n\t\t| COCKPIT |");
+	int* bookedSeatNo = getBookedSeat(person[num].route, person[num].flightDate, &seatCardinality);
+	for (i = 0; i < 12; i++)
+	{
+		for (j = 0; j < 4; j++)
+		{
+			array[i * 4 + j] = i * 4 + j + 1;
+		}
+	}
+	if (bookedSeatNo[0] != 100)
+	{
+		for (i = 0; i < seatCardinality; i++)
+		{
+			array[bookedSeatNo[i] - 1] = 0;
+		}
+	}
+
 	printf("\n\t\t =========\n\n");
 	printf("\t _________Business________\n");
-	for (i = 1; i <= 16; i++)
+	for (i = 0; i < 4; i++)
 	{
-		if (array[i] == 0)
-			printf("\t %d", i);
-		else
-			printf("\t *");
-		if (i % 4 == 0)
-			printf("\n\n");
+		for (j = 0; j < 4; j++)
+		{
+			printf("\t %d", array[i * 4 + j]);
+			if (j % 4 == 3)
+			{
+				printf("\n");
+			}
+		}
 	};
 	printf("\t _________Economy__________\n");
-	for (i = 17; i <= 48; i++)
+	for (i = 4; i < 12; i++)
 	{
-		if (array[i] == 0)
-			printf("\t %d", i);
-		else
-			printf("\t *");
-		if (i % 4 == 0)
-			printf("\n");
+		for (j = 0; j < 4; j++)
+		{
+			printf("\t %d", array[i * 4 + j]);
+			if (j % 4 == 3)
+			{
+				printf("\n");
+			}
+		}
 	}
 
 	int valiseat = 0;
@@ -378,6 +396,7 @@ void Booking(int *array, int choice, int oPrice)
 	{
 		printf("\nWhich seat number do you want? \n");
 		scanf("%d", &j);
+		j += 1;
 		if (j > 48 || j < 1)
 			valiseat = 0;
 		else
@@ -392,7 +411,7 @@ void Booking(int *array, int choice, int oPrice)
 			else
 				valiseat = 1;
 		}
-		if (array[j] == 1)
+		if (array[j] == 0)
 		{
 			printf("Sorry, this seat is unavailable! Please choose another seat.\n");
 			valiseat = 0;
@@ -403,7 +422,7 @@ void Booking(int *array, int choice, int oPrice)
 
 	array[j] = 1;
 
-	person[num].seat = j;
+	person[num].seat = j-1;
 	if (j >= 1 && j <= 16)
 		strcpy(person[num].class, "Business");
 	if (j >= 17 && j <= 48)
@@ -451,8 +470,8 @@ float TotalPrice(int original, struct Date dt1, struct Date dt2)
 //Cancel the ticket
 void Cancel(char identity[30])
 {
-	FILE *f;
-	FILE *fTemp;
+	FILE* f;
+	FILE* fTemp;
 	char buffer[30];
 	int line = 0, count = 0;
 	char path[] = "Customer.txt";
@@ -497,12 +516,12 @@ void ReservedTicket()
 {
 	char pass[10], pak[] = "pass";
 	char path[] = "Customer.txt";
-	char *line1;
-	char *line2;
-	char *line3;
-	char *line5;
-	char *line6;
-	char **arrfilenames;
+	char* line1;
+	char* line2;
+	char* line3;
+	char* line5;
+	char* line6;
+	char** arrfilenames;
 	printf("Enter the password to see details: ");
 	scanf("%s", &pass);
 	if (strcmp(pass, pak) == 0)
@@ -527,18 +546,18 @@ void ReservedTicket()
 }
 
 // Đọc tất cả các dòng trong Customer.txt và lưu vào 1 mảng
-char **Readfile(const char *filename)
+char** Readfile(const char* filename)
 {
-	FILE *R;
+	FILE* R;
 	char line[100];
-	char **customerList;
-	customerList = (char **)malloc(sizeof(char *));
+	char** customerList;
+	customerList = (char**)malloc(sizeof(char*));
 	int count = 0;
 	R = fopen(filename, "r");
 	while (fgets(line, sizeof(line), R))
 	{
-		customerList = (char **)realloc(customerList, (count + 1) * sizeof(char *));
-		customerList[count] = (char *)malloc(sizeof(line));
+		customerList = (char**)realloc(customerList, (count + 1) * sizeof(char*));
+		customerList[count] = (char*)malloc(sizeof(line));
 		strcpy(customerList[count], line);
 		strtok(customerList[count], "\n");
 		count++;
@@ -551,9 +570,9 @@ char **Readfile(const char *filename)
 }
 
 // Đếm số dòng của 1 file
-int countLine(const char *filename)
+int countLine(const char* filename)
 {
-	FILE *R;
+	FILE* R;
 	char c;
 	// char line[100];
 	// char **CustomerList;
@@ -594,8 +613,8 @@ void Ticket(int id2, int original)
 //Print each ticket into a ticket file
 void Cusfile(int id2)
 {
-	FILE *C;
-	FILE *D;
+	FILE* C;
+	FILE* D;
 	char filename[20];
 	char directory[300];
 	char s[300];
@@ -604,7 +623,7 @@ void Cusfile(int id2)
 	strcat(directory, filename);
 	C = fopen(directory, "w");
 	sprintf(s, "%s\n%s\n%s\n%s\n%s\n%d\n%d", person[num].route, person[num].name, person[num].identity,
-			person[num].purchaseDate, person[num].flightDate, person[num].seat, person[num].totalPrice);
+		person[num].purchaseDate, person[num].flightDate, person[num].seat, person[num].totalPrice);
 	fputs(s, C);
 
 	//Print customer list into Customer.txt
@@ -620,7 +639,7 @@ void RouteList()
 {
 	int i = 0, count = 0;
 	char line[50];
-	FILE *f;
+	FILE* f;
 	f = fopen("FlightSchedule.txt", "r");
 	if (!f)
 		printf("cannot open file");
@@ -640,7 +659,7 @@ void RouteList()
 }
 
 //Get system time
-void GetSystemDate(int *d, int *m, int *y)
+void GetSystemDate(int* d, int* m, int* y)
 {
 	SYSTEMTIME stime;
 	GetLocalTime(&stime);
@@ -652,7 +671,7 @@ void GetSystemDate(int *d, int *m, int *y)
 //find weekday of flight date using Sakamoto's method
 int Weekday(int d, int m, int y)
 {
-	int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+	int t[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
 	y -= m < 3;
 	return (y + y / 4 - y / 100 + y / 400 + t[m - 1] + d) % 7;
 }
@@ -747,4 +766,38 @@ int CompareTime(int dd, int mm, int yy, int cd, int cm, int cy)
 	else
 		validate = 0;
 	return validate;
+}
+
+int isSameFlight(char* route, char* flightDate, char* filename)
+{
+	if (strcmp(route, getithline(filename, 1)) == 0 && strcmp(flightDate, getithline(filename, 5)) == 0)
+	{
+		return 1;
+	}
+	return 0;
+}
+
+int* getBookedSeat(char* route, char* flightDate, int *seatCardinality)
+{
+	int* s;
+	s = (int*)malloc(2 * sizeof(int));
+	s[0] = 100;
+	*seatCardinality = 0;
+	int seatCount = 0;
+	char** ticketList;
+	char* tmp;
+	ticketList = Readfile("Customer.txt");
+	for (int i = 0; i < countLine("Customer.txt") - 1; i++)
+	{
+		if (isSameFlight(route, flightDate, ticketList[i]) == 1)
+		{
+			seatCount += 1;
+			*seatCardinality+=1;
+			s = (int*)realloc(s, seatCount * sizeof(int));
+			tmp = getithline(ticketList[i], 6);
+			strtok(tmp, "\n");
+			s[seatCount - 1] = atoi(tmp);
+		}
+	}
+	return s;
 }
