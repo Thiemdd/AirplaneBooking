@@ -396,7 +396,7 @@ void Booking(int choice, int oPrice)
 	{
 		printf("\nWhich seat number do you want? \n");
 		scanf("%d", &j);
-		j += 1;
+		j -= 1;
 		if (j > 48 || j < 1)
 			valiseat = 0;
 		else
