@@ -32,7 +32,7 @@ int main()
 		case 1:
 			ChangePrice();
 			break;
-		case 2: 
+		case 2:
 			ChangeTime();
 			break;
 		case 3:
@@ -206,7 +206,7 @@ void ChangeTime()
 		printf("Set the new flight time for the route (HH:MM - 12 hour format ): ");
 		fflush(stdin);
 		scanf("%d%*c%d", &hour, &min);
-		while ((hour < 0) || (hour > 12) || (min < 0) || (min > 59))
+		while (((hour < 1) || (hour > 12)) || ((min < 1) || (min > 59)))
 		{
 			printf("\nTime invalid");
 			printf("Set the new flight time for the route (HH:MM - 12 hour format ): ");
@@ -396,7 +396,7 @@ void Booking(int choice, int oPrice)
 		printf("\nWhich seat number do you want? \n");
 		scanf("%d", &j);
 		j -= 1;
-		if (j > 48 || j < 1)
+		if (j > 47 || j < 0)
 			valiseat = 0;
 		else
 			valiseat = 1;
@@ -405,7 +405,7 @@ void Booking(int choice, int oPrice)
 			printf("Sorry, this seat is unavailable! Please choose another seat.\n");
 			printf("Please re-enter seat number: ");
 			scanf("%d", &j);
-			if (j > 48 || j < 1)
+			if (j > 47 || j < 0)
 				valiseat = 0;
 			else
 				valiseat = 1;
@@ -422,9 +422,9 @@ void Booking(int choice, int oPrice)
 	array[j] = 1;
 
 	person[num].seat = j + 1;
-	if (j >= 1 && j <= 16)
+	if (j >= 0 && j <= 15)
 		strcpy(person[num].class, "Business");
-	if (j >= 17 && j <= 48)
+	if (j >= 16 && j <= 47)
 		strcpy(person[num].class, "Economy");
 	price = TotalPrice(oPrice, current, flight);
 
